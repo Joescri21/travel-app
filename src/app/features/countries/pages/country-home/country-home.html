@@ -1,0 +1,31 @@
+<section class="min-h-screen bg-dark-bg p-8 font-montserrat text-white">
+
+  <h1 class="font-orbitron text-neon-cyan text-4xl mb-8 text-center tracking-widest">
+    EXPLORADOR GLOBAL
+  </h1>
+
+  <div class="max-w-md mx-auto mb-12">
+    <div class="join w-full shadow-[0_0_15px_rgba(0,242,255,0.2)]">
+      <input
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="buscarPais()"
+        class="input input-bordered join-item w-full bg-neutral-900 border-neon-cyan focus:border-neon-cyan"
+        placeholder="Escribe un país (ej: Mexico)..." />
+      <button
+        (click)="buscarPais()"
+        class="btn btn-primary join-item bg-neon-cyan border-neon-cyan text-black hover:bg-cyan-400">
+        BUSCAR
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div *ngFor="let country of countries()"
+         class="bg-neutral-900 border border-neon-pink p-6 rounded-xl shadow-[0_0_10px_rgba(255,0,127,0.1)] transition-all hover:scale-105">
+      <img [src]="country.flags.svg" [alt]="country.flags.alt" class="w-full h-40 object-cover rounded-lg mb-4">
+      <h2 class="font-orbitron text-neon-pink text-xl mb-2">{{ country.name.common }}</h2>
+      <p class="text-sm">📍 <span class="text-gray-400">Capital:</span> {{ country.capital }}</p>
+      <p class="text-sm">👥 <span class="text-gray-400">Población:</span> {{ country.population | number }}</p>
+    </div>
+  </div>
+</section>

@@ -1,19 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: all;
-}
 
+// Configuración de DaisyUI para la v4
+@plugin "daisyui";
 
-// Variables Neón
-$neon-cyan: #00f2ff;
-$neon-pink: #ff007f;
-$neon-violet: #9d00ff;
-$bg-dark: #0a0a0a;
-$card-bg: #1a1a1a;
+@theme {
+  /* Aquí definimos tus colores neón para usarlos como clases de Tailwind */
+  --color-neon-cyan: #00f2ff;
+  --color-neon-pink: #ff007f;
+  --color-neon-violet: #9d00ff;
+  --color-dark-bg: #0a0a0a;
 
-// Mixin para el efecto "Glow"
-@mixin neon-shadow($color) {
-  border: 1px solid $color;
-  box-shadow: 0 0 8px rgba($color, 0.4), inset 0 0 4px rgba($color, 0.2);
+  /* Esto nos permitirá usar fuentes personalizadas después */
+  --font-orbitron: "Orbitron", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
 }
