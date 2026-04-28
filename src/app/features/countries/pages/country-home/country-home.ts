@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Countries } from '../../../../core/services/countries';
 import { Country } from '../../../../core/models/country.model';
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   selector: 'country-home',
@@ -10,14 +11,16 @@ import { Country } from '../../../../core/models/country.model';
   imports: [
     CommonModule,
     FormsModule,
-    DecimalPipe
-  ],
+    DecimalPipe,
+    RouterLink
+],
   templateUrl: './country-home.html',
   styles: ``,
 })
 export class CountryHome {
 
   private countryService = inject(Countries);
+  private router = inject(Router);
 
   public countries = signal<Country[]>([]);
   public searchTerm= '';
@@ -61,6 +64,7 @@ export class CountryHome {
     const encontrado = this.countries().find(c => c.cca3 === id);
     if (encontrado) {
       this.paisSeleccionado.set(encontrado);
+      this.router.navigate(['/country', id]);
       // 2. Aquí es donde el jueves dispararemos la petición a la API del Clima
       console.log('Cargando clima para:', encontrado.capital[0]);
     }
