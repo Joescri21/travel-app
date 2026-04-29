@@ -1,10 +1,14 @@
+
+
 @if (country()) {
 
+<div class="w-full aspect-video overflow-hidden rounded-xl mb-4 hover:shadow-[0_0_20px_rgba(157,0,255,0.3)] transition-shadow ">
   <img
-  [src]="country().flags.svg"
-  [alt]="country().flags.alt"
-  class="w-full h-40 object-cover rounded-lg mb-4"
->
+    [src]="country().flags.svg"
+    [alt]="country().flags.alt"
+    class="w-full h-auto object-cover rounded-lg mb-4"
+  >
+</div>
 
 <h2 class="font-orbitron text-neon-pink text-xl mb-2">
     {{ country().translations['spa']?.common || country().name.common}}
@@ -24,7 +28,7 @@
   {{ country().population | number }}
 </p>
 
-<p *ngIf="country().currencies">
+<p *ngIf="country().currencies" class="text-white">
   💰 <span class="text-gray-400">Moneda:</span>
   <span *ngFor="let curr of country().currencies | keyvalue">
     {{ $any(curr.value).name }} ({{ $any(curr.value).symbol }})

@@ -6,7 +6,19 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     @if (selectCountry()) {
-      <country-info [country]="selectCountry()!" />
+      <div class="inline-block mb-10">
+        <h1 class="text-5xl md:text-7xl font-orbitron text-white uppercase tracking-tighter italic">
+          {{ selectCountry()?.translations?.['spa']?.common }}
+        </h1>
+
+        <div class="h-1.5 mb-6 w-full bg-gradient-to-r from-neon-violet to-transparent mt-2 rounded-full shadow-[0_0_20px_#9d00ff]"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          @if (selectCountry()) {
+          <country-info [country]="selectCountry()!" />
+          }
+        </div>
+      </div>
     }
 
     <div class="bg-neutral-900 border border-dashed border-neon-cyan p-10 rounded-2xl flex items-center justify-center">
