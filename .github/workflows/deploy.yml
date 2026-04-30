@@ -1,0 +1,31 @@
+name: Despliegue Automatico a Netlify
+on:
+  push:
+    branches:
+      - main  # Esto hace que se active cuando haces un git push
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bajando el codigo
+        uses: actions/checkout@v4
+
+      - name: Instalando Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Instalando dependencias
+        run: npm install
+
+      - name: Construyendo la App (ng build)
+        run: npm run build -- --configuration production
+
+      - name: Subiendo a Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=dist/travel-app/browser --prod
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
