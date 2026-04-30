@@ -2,7 +2,7 @@ name: Despliegue Automatico a Netlify
 on:
   push:
     branches:
-      - main  # Esto hace que se active cuando haces un git push
+      - master  # Esto hace que se active cuando haces un git push
 
 jobs:
   build-and-deploy:
