@@ -4,8 +4,8 @@
   <!-- Botón Volver -->
   <button
     routerLink="/"
-    class="flex items-center gap-2 text-pegasus-muted hover:text-pegasus-accent transition-colors self-start font-bold uppercase tracking-widest text-xs">
-    <span class="text-lg"> ← </span> Volver a la exploración
+    class="flex items-center gap-2 text-pegasus-muted hover:text-pegasus-border transition-colors self-start font-bold uppercase tracking-widest text-xs">
+    <span class="text-lg text-pegasus-border"> ← </span> Volver a la exploración
   </button>
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -14,15 +14,15 @@
     @if (selectCountry()) {
       <div class="lg:col-span-5 flex flex-col">
         <div class="relative mb-8">
-          <h1 class="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
+          <h1 class="text-6xl md:text-8xl font-black text-pegasus-highlight tracking-tighter leading-none">
             {{ selectCountry()?.translations?.['spa']?.common }}
           </h1>
-          <!-- Línea Pegasus: reemplaza el degradado violeta por el azul cielo sólido -->
-          <div class="h-2 w-32 bg-pegasus-accent mt-4 rounded-full shadow-lg shadow-sky-500/20"></div>
+          <!-- Línea Pegasus -->
+          <div class="h-2 w-32 bg-pegasus-border mt-4 rounded-full shadow-lg shadow-sky-500/20"></div>
         </div>
 
         <!-- Tarjeta de Información General -->
-        <div class="bg-pegasus-card border border-slate-800 p-8 rounded-3xl shadow-2xl">
+        <div class="bg-pegasus-card border border-pegasus-border p-8 rounded-3xl shadow-2xl">
           <country-info [country]="selectCountry()!" />
         </div>
       </div>
@@ -32,7 +32,7 @@
     <div class="lg:col-span-7 flex flex-col gap-6">
 
       <!-- Slot para el Componente de Clima (Open-Meteo) -->
-      <div class="bg-slate-900/50 border border-dashed border-slate-700 p-8 rounded-3xl flex flex-col items-center justify-center min-h-[250px]">
+      <div class="bg-slate-900/50 border border-dashed border-pegasus-border p-6 rounded-3xl flex flex-col items-center justify-center min-h-[250px]">
         <weather-info
           [lat]="selectCountry()?.latlng?.[0] || 0"
           [lng]="selectCountry()?.latlng?.[1] || 0"
@@ -41,12 +41,12 @@
 
       <!-- Grid para futuros componentes (Moneda, Lugares, etc.) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <div class="bg-pegasus-card/40 border border-slate-800 p-6 rounded-2xl h-40 flex items-center justify-center">
+         <div class="bg-pegasus-card/40 border border-pegasus-border p-6 rounded-2xl h-40 flex items-center justify-center">
             <span class="text-slate-600 text-xs font-bold uppercase tracking-widest italic text-center">
                Próximamente:<br>Conversor de Moneda
             </span>
          </div>
-         <div class="bg-pegasus-card/40 border border-slate-800 p-6 rounded-2xl h-40 flex items-center justify-center">
+         <div class="bg-pegasus-card/40 border border-pegasus-border p-6 rounded-2xl h-40 flex items-center justify-center">
             <span class="text-slate-600 text-xs font-bold uppercase tracking-widest italic text-center">
                Próximamente:<br>Lugares de Interés
             </span>

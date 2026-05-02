@@ -41,7 +41,7 @@
     <!-- Boton de la tarjeta -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       @for (item of countries(); track item.cca3) {
-        <div class="bg-pegasus-card border border-pegasus-border p-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-pegasus-accent/40 group">
+        <div class="bg-pegasus-card border border-pegasus-accent p-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-pegasus-accent/40 group">
 
           <!-- Componente de información pura -->
           <country-info [country]="item" />

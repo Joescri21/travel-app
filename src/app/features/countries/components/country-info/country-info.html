@@ -11,9 +11,9 @@
   </div>
 
 <!-- Título-->
-  <div class="flex items-center gap-3 mb-4">
-    <div class="h-8 w-1 bg-pegasus-accent rounded-full"></div>
-    <h2 class="text-2xl font-black text-white tracking-tight">
+  <div class="flex items-center gap-3 mb-2">
+    <div class="h-8 w-1 bg-pegasus-border rounded-full"></div>
+    <h2 class="text-2xl font-black text-pegasus-highlight tracking-tight">
         {{ country().translations['spa']?.common || country().name.common}}
     </h2>
   </div>
@@ -23,25 +23,25 @@
     <p class="text-sm flex items-center gap-2">
       <span class="text-pegasus-accent">📍</span>
       <span class="text-pegasus-muted font-medium">Capital:</span>
-      <span class="text-white">{{ country().capital }}</span>
+      <span class="text-pegassus-highlight">{{ country().capital }}</span>
     </p>
 
     <p class="text-sm flex items-center gap-2">
       <span class="text-pegasus-accent">🌍</span>
       <span class="text-pegasus-muted font-medium">Continente:</span>
-      <span class="text-white">{{ traducirContinente(country().continents[0]) }}</span>
+      <span class="text-pegassus-highlight">{{ traducirContinente(country().continents[0]) }}</span>
     </p>
 
     <p class="text-sm flex items-center gap-2">
       <span class="text-pegasus-accent">👥</span>
       <span class="text-pegasus-muted font-medium">Población:</span>
-      <span class="text-white">{{ country().population | number }}</span>
+      <span class="text-pegassus-highlight">{{ country().population | number }}</span>
     </p>
 
     <p *ngIf="country().currencies" class="text-sm flex items-center gap-2">
       <span class="text-pegasus-accent">💰</span>
       <span class="text-pegasus-muted font-medium">Moneda:</span>
-      <span class="text-white" *ngFor="let curr of country().currencies | keyvalue">
+      <span class="text-pegassus-highlight" *ngFor="let curr of country().currencies | keyvalue">
         {{ $any(curr.value).name }} ({{ $any(curr.value).symbol }})
       </span>
     </p>
