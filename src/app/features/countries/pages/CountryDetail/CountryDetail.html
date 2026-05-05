@@ -47,7 +47,7 @@
             </span>
          </div>
          <div class="bg-pegasus-card/40 border border-pegasus-border p-6 rounded-2xl h-40 flex items-center justify-center">
-            <country-attractions [countrycode]="" />
+            <country-attractions *ngIf="selectCountry()" [countrycode]="selectCountry()!" />
          </div>
       </div>
 
