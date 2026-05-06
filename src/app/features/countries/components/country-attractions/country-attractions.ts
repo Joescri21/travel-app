@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { Geoapify } from '../../../../core/services/geoapify';
 import { Country } from '../../../../core/models/country.model';
 
@@ -14,20 +14,31 @@ import { Country } from '../../../../core/models/country.model';
 export class CountryAttractions {
 
   private geoapifyService = inject(Geoapify);
-  private _countryCode: string = '';
+  private currentCountryCode: string = '';
   private _lat?: number;
   private _lng?: number;
 
   @Input()
-  set countryCode(val: string) {
-    if (val) {
-      this._countryCode = val;
-      console.log('🔔 Sensor activado en el Hijo! Código recibido:', val);
-    }
+set countryCode(value: any) {
+  // 🛡️ EL CANDADO REINA: Si el código es nulo o es el mismo país que ya calculamos, rompe el flujo.
+  // El input countryCode recibe directamente el string cca2, no un objeto.
+  if (!value || value === this.currentCountryCode) {
+    return;
   }
 
+  // Si es un país nuevo, guardamos el registro y procedemos
+  this.currentCountryCode = value;
+  // No es necesario llamar a loadAttractions aquí, ya que lat y lng son inputs separados
+  // y sus setters ya llaman a tryLoadAttractions.
+  // this.tryLoadAttractions(); // Podría llamarse aquí si lat/lng ya estuvieran disponibles
+}
+
   get countryCode(): string {
-    return this._countryCode;
+    return this.currentCountryCode;
+  }
+
+  private cargarAtracciones(lat: number, lng: number): void {
+    // Este método estaba vacío y no se usaba correctamente. La lógica de carga está en loadAttractions.
   }
 
   @Input()
@@ -42,9 +53,9 @@ export class CountryAttractions {
     this.tryLoadAttractions();
   }
 
-  public attractions: any[] = [];
-  public isLoading: boolean = false;
-  public errorMessage: string | null = null;
+  public attractions = signal<any[]>([]);
+  public isLoading = signal<boolean>(false);
+  public errorMessage = signal<string | null>(null);
 
   private tryLoadAttractions(): void {
     if (this._lat == null || this._lng == null) {
@@ -59,31 +70,25 @@ export class CountryAttractions {
     const lng = this._lng;
 
     if (lat == null || lng == null) {
-      this.errorMessage = 'Coordenadas no disponibles para buscar lugares.';
+      this.errorMessage.set('Coordenadas no disponibles para buscar lugares.');
       return;
     }
 
-    this.errorMessage = null;
-    // Volvemos la tarea asíncrona para que Angular pinte la interfaz de forma limpia
-    setTimeout(() => {
-      this.isLoading = true;
-      console.log('🚀 Despegando petición HTTP hacia el servicio Geoapify...');
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+    console.log('🚀 Despegando petición HTTP hacia el servicio Geoapify...');
 
-      this.geoapifyService.getTopCountryAttractions(lat, lng, 20).subscribe({
-        next: (data) => {
-          // ⏳ Metemos la asignación en un proceso asíncrono seguro
-          setTimeout(() => {
-            this.attractions = data; // 🏛️ Guardamos los 20 registros reales
-            this.isLoading = false;
-          }, 0);
-
-          console.log('✅ ÉXITO TOTAL: Registros devueltos por la API:', data.length);
-        },
-        error: (err) => {
-          console.error('❌ ERROR en la respuesta del servidor:', err);
-          this.isLoading = false;
-        }
-      });
-    }, 0);
+    this.geoapifyService.getTopCountryAttractions(lat, lng, 20).subscribe({
+      next: (data) => {
+        this.attractions.set(data); // 🏛️ Guardamos los 20 registros reales
+        this.isLoading.set(false);
+        console.log('✅ ÉXITO TOTAL: Registros devueltos por la API:', data.length);
+      },
+      error: (err) => {
+        console.error('❌ ERROR en la respuesta del servidor:', err);
+        this.isLoading.set(false);
+        this.errorMessage.set('Error al cargar las atracciones.');
+      }
+    });
   }
 }

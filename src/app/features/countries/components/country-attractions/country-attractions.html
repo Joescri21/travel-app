@@ -3,18 +3,18 @@
 
   <p><strong>Código recibido del padre:</strong> {{ countryCode }}</p>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <p style="color: orange; font-weight: bold;">⏳ Consultando lugares en Geoapify...</p>
-  } @else if (errorMessage) {
-    <p style="color: #f87171; font-weight: bold;">❌ {{ errorMessage }}</p>
+  } @else if (errorMessage()) {
+    <p style="color: #f87171; font-weight: bold;">❌ {{ errorMessage() }}</p>
   } @else {
-    <p><strong>Lugares encontrados:</strong> {{ attractions.length }}</p>
+    <p><strong>Lugares encontrados:</strong> {{ attractions().length }}</p>
 
-    @if (attractions.length === 0) {
+    @if (attractions().length === 0) {
       <p>No se encontraron lugares cercanos.</p>
     } @else {
       <ul>
-        @for (lugar of attractions; track lugar.placeId) {
+        @for (lugar of attractions(); track lugar.placeId) {
           <li>👉 {{ lugar.name }} ({{ lugar.address }})</li>
         }
       </ul>
