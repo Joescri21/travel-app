@@ -23,15 +23,15 @@ export class Geoapify {
       .set('apiKey', apiKey);
 
   // En tu archivo geoapify.service.ts
-  const url = `${this.baseUrl}?categories=tourism.sights,entertainment.culture,heritage&filter=circle:${lng},${lat},5000&bias=proximity:${lng},${lat}&limit=${limit}&lang=es&apiKey=${apiKey}`;
+    const url = `${this.baseUrl}?categories=tourism.sights,entertainment.culture,heritage&filter=circle:${lng},${lat},5000&bias=proximity:${lng},${lat}&limit=${limit}&lang=es&apiKey=${apiKey}`;
 
     return this.http.get<any>(this.baseUrl, { params }).pipe(
       map(response => {
         const features = Array.isArray(response.features) ? response.features : [];
         return features.map((lugar: any) => ({
-          name: lugar.properties.name || lugar.properties.formatted,
+          name: lugar.properties.name || lugar.properties.formatted || 'Lugar desconocido',
           category: lugar.properties.categories?.[0],
-          address: lugar.properties.address_line2,
+          address: lugar.properties.address_line2 || lugar.properties.address_line1 || 'Sin dirección',
           placeId: lugar.properties.place_id
         }));
       })

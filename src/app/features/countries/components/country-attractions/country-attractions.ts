@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal } from '@angular/core';
 import { Geoapify } from '../../../../core/services/geoapify';
-import { Country } from '../../../../core/models/country.model';
+import { Pexel } from '../../../../core/services/pexel';
 
 @Component({
   selector: 'country-attractions',
@@ -14,31 +14,22 @@ import { Country } from '../../../../core/models/country.model';
 export class CountryAttractions {
 
   private geoapifyService = inject(Geoapify);
+  private pexelsService = inject(Pexel);
+
   private currentCountryCode: string = '';
   private _lat?: number;
   private _lng?: number;
 
-  @Input()
-set countryCode(value: any) {
-  // 🛡️ EL CANDADO REINA: Si el código es nulo o es el mismo país que ya calculamos, rompe el flujo.
-  // El input countryCode recibe directamente el string cca2, no un objeto.
-  if (!value || value === this.currentCountryCode) {
-    return;
-  }
 
-  // Si es un país nuevo, guardamos el registro y procedemos
-  this.currentCountryCode = value;
-  // No es necesario llamar a loadAttractions aquí, ya que lat y lng son inputs separados
-  // y sus setters ya llaman a tryLoadAttractions.
-  // this.tryLoadAttractions(); // Podría llamarse aquí si lat/lng ya estuvieran disponibles
-}
+  @Input()
+  set countryCode(value: any) {
+    if (!value || value === this.currentCountryCode) return;
+    this.currentCountryCode = value;
+    this.tryLoadAttractions();
+  }
 
   get countryCode(): string {
     return this.currentCountryCode;
-  }
-
-  private cargarAtracciones(lat: number, lng: number): void {
-    // Este método estaba vacío y no se usaba correctamente. La lógica de carga está en loadAttractions.
   }
 
   @Input()
@@ -58,35 +49,46 @@ set countryCode(value: any) {
   public errorMessage = signal<string | null>(null);
 
   private tryLoadAttractions(): void {
-    if (this._lat == null || this._lng == null) {
-      return;
-    }
-
+    if (this._lat == null || this._lng == null || !this.currentCountryCode) return; // Aseguramos que currentCountryCode también esté disponible
     this.loadAttractions();
   }
 
   private loadAttractions(): void {
-    const lat = this._lat;
-    const lng = this._lng;
-
-    if (lat == null || lng == null) {
-      this.errorMessage.set('Coordenadas no disponibles para buscar lugares.');
-      return;
-    }
-
+    const lat = this._lat!;
+    const lng = this._lng!;
 
     this.errorMessage.set(null);
     this.isLoading.set(true);
-    console.log('🚀 Despegando petición HTTP hacia el servicio Geoapify...');
 
     this.geoapifyService.getTopCountryAttractions(lat, lng, 20).subscribe({
       next: (data) => {
-        this.attractions.set(data); // 🏛️ Guardamos los 20 registros reales
+        // Inicializamos el signal con los datos de las atracciones
+        this.attractions.set(data);
+
+        // Para cada atracción, buscamos su foto
+        data.forEach((lugar: any, index: number) => {
+          const query = `${lugar.name} ${this.currentCountryCode}`;
+
+          this.pexelsService.getPhoto(query).subscribe({
+            next: (url) => {
+              // Actualizamos el signal de forma inmutable para que Angular detecte el cambio
+              this.attractions.update(currentAttractions => {
+                const updatedAttractions = [...currentAttractions]; // Creamos una nueva copia del array
+                if (updatedAttractions[index]) { // Verificamos que el elemento aún exista en el índice
+                  updatedAttractions[index] = { ...updatedAttractions[index], fotoUrl: url }; // Creamos un nuevo objeto para el elemento actualizado
+                }
+                return updatedAttractions;
+              });
+            },
+            error: (err) => console.error('Error en foto Pexels:', err)
+          });
+        });
+
+
         this.isLoading.set(false);
-        console.log('✅ ÉXITO TOTAL: Registros devueltos por la API:', data.length);
       },
       error: (err) => {
-        console.error('❌ ERROR en la respuesta del servidor:', err);
+        console.error('❌ ERROR:', err);
         this.isLoading.set(false);
         this.errorMessage.set('Error al cargar las atracciones.');
       }
@@ -94,13 +96,13 @@ set countryCode(value: any) {
   }
 
   translateCategory(cat: string): string {
-      const categories: any = {
-        'tourism.sights': 'Lugar Turístico',
-        'entertainment.culture': 'Cultura y Arte',
-        'heritage': 'Patrimonio Histórico',
-        'tourism.attraction': 'Atracción',
-        'natural': 'Naturaleza'
-      };
-      return categories[cat] || 'Interés General';
-    }
+    const categories: any = {
+      'tourism.sights': 'Lugar Turístico',
+      'entertainment.culture': 'Cultura y Arte',
+      'heritage': 'Patrimonio Histórico',
+      'tourism.attraction': 'Atracción',
+      'natural': 'Naturaleza'
+    };
+    return categories[cat] || 'Interés General';
+  }
 }
